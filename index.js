@@ -22,12 +22,12 @@ app.use(express.json())
 app.get('/', (req, res) => {
     const filePath = path.resolve('src','k.html');
     console.log("sdfghjh");
-    res.sendFile(filePath);
+    res.send("Hello World!");
 });
 app.get('/get1', (req, res) => {
     const filePath = path.resolve('k.html');
     console.log("sdfghjh");
-    res.sendFile(filePath);
+    res.send("sdfghjh");
 });
 app.post('/post' ,async(req, res) => {
     const getPostman=req.body;
