@@ -24,6 +24,11 @@ app.get('/', (req, res) => {
     console.log("sdfghjh");
     res.sendFile(filePath);
 });
+app.get('/get1', (req, res) => {
+    const filePath = path.resolve('k.html');
+    console.log("sdfghjh");
+    res.sendFile(filePath);
+});
 app.post('/post' ,async(req, res) => {
     const getPostman=req.body;
     console.log(getPostman);
