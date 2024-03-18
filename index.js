@@ -10,7 +10,9 @@ import jwt from "jsonwebtoken";
 const app = express();
 
 
-app.use(cors())
+app.use(cors({
+    origin: "*" //*- for global  http://localhost:3000 - for any link
+}))
 //authentication
 const auth=(req,res,next)=>{
 try{
@@ -89,13 +91,12 @@ app.delete('/delete/:id', async (req, res)=>{
 });
 
 app.post("/register",async (req, res)=>{
-    const {email,password} = req.body;
-    
+    const {username,email,password} = req.body;
     const userfind=await client.db("CURD").collection("registerdata").findOne({email:email});
     if (!userfind){
     const salt=await bcrypt.genSalt(10);
     const encrypt=await bcrypt.hash(password,salt);
-    const registerData = await client.db("CURD").collection("registerdata").insertOne({email:email,password:encrypt});
+    const registerData = await client.db("CURD").collection("registerdata").insertOne({name:username,email:email,password:encrypt});
     res.status(201).send(registerData);
     
     }
@@ -111,17 +112,16 @@ app.post('/login', async(req, res) => {
     if (userfind){
         const mongopass=userfind.password;
         const check= await bcrypt.compare(password, mongopass);
-    if(check){
-        const token=jwt.sign({id:userfind._id},"abcd");// jwt token abcd
-        res.status(200).send({token:token});
-        
+        if(check){
+            const token=jwt.sign({id:userfind._id},"abcd");// jwt token abcd
+            res.status(200).send({token:token})
+        }
+        else{
+            res.status(400).send({message:"not Verified user"});
+        }
     }
     else{
-        res.status(400).send("not Verified user");
-    }
-    }
-    else{
-        res.status(400).send("user not found ");
+        res.status(400).send({message:"User not Found"});
     }
 })
 ;
