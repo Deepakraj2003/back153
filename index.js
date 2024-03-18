@@ -3,15 +3,25 @@ import path from "path";
 import { MongoClient } from 'mongodb'
 import { ObjectId } from "mongodb";
 import cors from "cors";
-
-
-
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
 
 const app = express();
 
 
 app.use(cors())
+//authentication
+const auth=(req,res,next)=>{
+try{
+const token = req.header("backend-token");//keyname,assign value as token
+jwt.verify(token,"abcd");
+next();
+}
+catch(error) {
+res.status(401).send({message:error.message});
+}
+}
 
 // Connection URL
 const url = "mongodb+srv://deera3468:wQYHszmzEZiYK4tD@back153.i8nqqzc.mongodb.net/?retryWrites=true&w=majority&appName=back153";
@@ -50,7 +60,7 @@ app.post('/postmany',async(req, res) => {
     res.status(200).send(sendMethod);
 });
 
-app.get('/getmany',async (req,res)=>{
+app.get('/getmany', auth,async (req,res)=>{
     const getdata= await client.db("CURD").collection("data").find({}).toArray();
     res.status(200).send(getdata);
 });
@@ -83,7 +93,9 @@ app.post("/register",async (req, res)=>{
     
     const userfind=await client.db("CURD").collection("registerdata").findOne({email:email});
     if (!userfind){
-    const registerData = await client.db("CURD").collection("registerdata").insertOne({email:email,password:password});
+    const salt=await bcrypt.genSalt(10);
+    const encrypt=await bcrypt.hash(password,salt);
+    const registerData = await client.db("CURD").collection("registerdata").insertOne({email:email,password:encrypt});
     res.status(201).send(registerData);
     
     }
@@ -93,8 +105,24 @@ app.post("/register",async (req, res)=>{
     
     
 })
-app.post('/login', (req, res) => {
-
+app.post('/login', async(req, res) => {
+    const {email,password} = req.body;
+    const userfind=await client.db("CURD").collection("registerdata").findOne({email:email});
+    if (userfind){
+        const mongopass=userfind.password;
+        const check= await bcrypt.compare(password, mongopass);
+    if(check){
+        const token=jwt.sign({id:userfind._id},"abcd");// jwt token abcd
+        res.status(200).send({token:token});
+        
+    }
+    else{
+        res.status(400).send("not Verified user");
+    }
+    }
+    else{
+        res.status(400).send("user not found ");
+    }
 })
 ;
 
