@@ -60,7 +60,7 @@ app.post('/postmany',async(req, res) => {
     res.status(200).send(sendMethod);
 });
 
-app.get('/getmany', auth,async (req,res)=>{
+app.get('/getmany',async (req,res)=>{
     const getdata= await client.db("CURD").collection("data").find({}).toArray();
     res.status(200).send(getdata);
 });
