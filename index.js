@@ -10,9 +10,7 @@ import jwt from "jsonwebtoken";
 const app = express();
 
 
-app.use(cors({
-    origin: "*" //*- for global  http://localhost:3000 - for any link
-}))
+app.use(cors())
 //authentication
 const auth=(req,res,next)=>{
 try{
