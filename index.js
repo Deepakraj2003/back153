@@ -50,24 +50,24 @@ app.get('/get1', (req, res) => {
 app.post('/post' ,async(req, res) => {
     const getPostman=req.body;
     console.log(getPostman);
-    const sendMethod=await client.db("CURD").collection("data").insertOne(getPostman);
+    const sendMethod=await client.db("CURD").collection("task").insertOne(getPostman);
     res.status(200).send(sendMethod);
 });
 app.post('/postmany',async(req, res) => {
     const getPostman=req.body;
     console.log(getPostman);
-    const sendMethod=await client.db("CURD").collection("data").insertMany(getPostman);
+    const sendMethod=await client.db("CURD").collection("task").insertMany(getPostman);
     res.status(200).send(sendMethod);
 });
 
 app.get('/getmany',async (req,res)=>{
-    const getdata= await client.db("CURD").collection("data").find({}).toArray();
+    const getdata= await client.db("CURD").collection("task").find({}).toArray();
     res.status(200).send(getdata);
 });
 
 app.get('/getone/:id', async (req, res) => {
     const { id } = req.params;
-    const getdata = await client.db("CURD").collection("data").findOne({_id:new ObjectId(id)});
+    const getdata = await client.db("CURD").collection("task").findOne({_id:new ObjectId(id)});
     res.status(200).send(getdata);
 });
 
@@ -76,7 +76,7 @@ app.get('/getone/:id', async (req, res) => {
 app.put('/update/:id', async (req, res) => {
     const {id}=req.params;
     const getpostman=req.body;
-    const updatedata = await client.db("CURD").collection("data").updateOne({_id:new ObjectId(id)},{$set:getpostman});
+    const updatedata = await client.db("CURD").collection("task").updateOne({_id:new ObjectId(id)},{$set:getpostman});
     res.status(201).send(updatedata);
 });
 
@@ -84,7 +84,7 @@ app.put('/update/:id', async (req, res) => {
 
 app.delete('/delete/:id', async (req, res)=>{
     const {id}=req.params;
-    const deletedata = await client.db("CURD").collection("data").deleteOne({_id:new ObjectId(id)});
+    const deletedata = await client.db("CURD").collection("task").deleteOne({_id:new ObjectId(id)});
     res.status(200).send(deletedata);
 });
 
